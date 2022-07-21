@@ -1,0 +1,29 @@
+uuid: a3d90b9c-1241-4b43-b571-908dce1a6e44
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_taxo_agenda_test
+    - node.type.evenement_
+    - taxonomy.vocabulary.agenda_taxo
+id: node.evenement_.field_taxo_agenda_test
+field_name: field_taxo_agenda_test
+entity_type: node
+bundle: evenement_
+label: 'taxo agenda'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      agenda_taxo: agenda_taxo
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

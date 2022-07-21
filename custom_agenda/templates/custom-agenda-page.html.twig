@@ -1,0 +1,18 @@
+ 
+ <h1>L'événement courant:</h1>
+  <h2>Titre:<a style="color:red">{{node_title}}</a></h2>
+  <h2>Body:<a style="color:red">{{node_body|striptags }}</a></h2>
+  <h2>Type taxonomy:<a style="color:red">{{node_taxo_type}}</a></h2>
+  <h2>Start date:<a style="color:red">{{node_start_date}}</a></h2>
+  <h2>End date :<a style="color:red">{{node_end_date}}</a></h2>
+
+
+ <h1>Les autre événement du même type:<a style="color:red">{{node_taxo_type}}</a></h1>
+ {% if noce_others_event_title  %}
+  <h2>Titre:<a style="color:red">{{noce_others_event_title}}</a></h2>
+  <h2>Body:<a style="color:red">{{noce_others_event_body|striptags }}</a></h2>
+{% else %}
+ <h2>Pas d'événement avec le même type de taxonomie</h2> 
+{% endif %}
+
+

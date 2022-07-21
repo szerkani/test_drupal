@@ -1,0 +1,12 @@
+langcode: en
+status: true
+title: 'Custom agenda'
+id: custom_agenda
+weight: 0
+module: custom_agenda
+callback: unpublish_event_end_date
+scheduler:
+  id: crontab
+  configuration:
+   rules:
+     - '30 7 * * *'

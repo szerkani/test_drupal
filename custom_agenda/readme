@@ -1,0 +1,82 @@
+
+Durée : 3h .
+Actuellement  je suis en congés , j’ai fait le test juste avant de partir .
+Sur le test j’ai utilisé mon local  , j’ai essayé de répondre aux besoins /questions avec un module contrib : fullcalendar_view  et un module custom :  custom_agenda .
+Vous trouverez aussi dans le dossier images (\custom_agenda\images ) quelques captures d’écran des  résultats attendus  .
+Ci-après (dans la page 2) les commandes à lancer pour activer et configurer les deux modules  
+
+Je reste disponible si besoin .
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1-Install module full calendar :
+    composer require 'drupal/fullcalendar_view:^5.1'
+2-enable the module 
+   drush en fullcalendar_view
+3- Ajouter le module custom : custom_agenda 
+
+Assurer que les modules ci-dessous  sont disponibles et activés :
+  module:
+    - datetime
+    - fullcalendar_view
+    - node
+    - text
+    - user
+
+//importer les config en auto 
+drush config-import --source=modules/custom/custom_agenda/config/install --partial -y
+
+
+
+// ou manuellement pour plus de détails 
+créer le content type : agenda event Machine name: evenement_
+
+ ajouter les fields : start date , end date , description ..etc 
+
+
+créer une taxonomie avec différentes couleurs :
+ajouter des vocabulaires pour la taxo ex : rouge , bleu ,orange …etc
+
+ Create the Calendar View :
+page display setting select  full calendar as  format
+
+Page: Style options dans settings :
+LEGEND COLORS :
+ajouter les fields title , start date , end date , body ,
+Legend colors :
+ Event taxonomy field => taxo_agenda
+ Vocabularies => agenda_taxo
+COLORS FOR TAXONOMIES: 
+select colors for each taxo (avec les term qu ‘on a déjà crée  )
+EVENT BUNDLE (CONTENT) TYPE
+ Agenda event 
+
+
+create view : evenement agenda machine name :evenement_agenda_  => Page (/evenement-agenda)
+
+	Save 
+
+Pour tester :
+créer quelques  content type « Agenda event »    pour tester  ex : avec  un titre « test agenda taxo bleu », une date de début et une date de fin  => save 
+qu’on revient sur le /evenement-agenda  on retrouve notre event afficher avec la couleur de la taxonomie définie 
+
+

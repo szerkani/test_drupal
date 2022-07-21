@@ -1,0 +1,156 @@
+<?php
+
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\node\Entity\Node;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\EntityFormBuilder;
+use Drupal\taxonomy\Entity\Term;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+
+
+//cron job to lunch the cron
+function unpublish_event_end_date(){
+
+    unpublish_event_calendar();
+
+}
+
+/**
+   * theme for registration page 
+   * render the form 
+   */
+  //pour afficher les display block & custom agenda template
+  function custom_agenda_theme($existing, $type, $theme, $path) {
+      return [
+            'custom_agenda_type' => array (
+              'template' => 'custom-agenda-page',
+              'variables' => array(
+                'node_title' => NULL,
+                'node_body' => NULL,
+                'node_taxo_type' => NULL,
+                'node_startdate'=>NULL,
+                'node_end_date'=>NULL,
+                'nodes' => NULL,
+                'noce_others_event_title'=>NULL,
+                'noce_others_event_body'=>NULL,
+                // 'titleOthersEvent'=>NULL,
+                  
+          
+              ),
+              
+            ),
+
+            'custom_agenda_type_block' => array (
+              'template' => 'custom-agenda-page-block',
+              'variables' => array(
+                "titles"=>NULL,
+              ),
+              
+            ),
+          ];
+
+
+          
+  }
+      
+
+ 
+  // pour afficher le détail d'un évent et un autre meme type taxonomie 
+  /**
+   * hook to build form registration with field of content type
+   * get the form and the node 
+   */
+  // taking into account the needed of the second point from the test
+  function custom_agenda_preprocess_custom_agenda_type(&$variables) {
+   
+        // a verifier pour le nom de la machine 
+        $node =\Drupal::routeMatch()->getParameter('node') ;
+        $currentNodeID= $node->get('nid')->first()->getValue()['value'];
+        $currentTaxo = Term::load($node->get('field_taxo_agenda_test')->target_id);
+        if($currentTaxo!=null){
+        $currentTaxoName = $currentTaxo->getName();
+        }
+         $nids = \Drupal::entityQuery('node')->condition('type','evenement_')->execute();
+         $nodes =  \Drupal\node\Entity\Node::loadMultiple($nids);
+        //  $nodes = node_load_multiple($nids);
+         foreach ($nodes as $nodeOthers) {
+          $nodeID=$nodeOthers->get('nid')->first()->getValue()['value'];
+
+          if($nodeID!=$currentNodeID){
+          $currentTaxoOthers= Term::load($nodeOthers->get('field_taxo_agenda_test')->target_id);
+
+          if($currentTaxoOthers!=null){
+            $currentTaxoName2 = $currentTaxoOthers->getName();
+
+            if($currentTaxoName==$currentTaxoName2){
+              $othersEvents=$nodeOthers ;
+             $nodeIdOthers=$nodeOthers->get('nid')->first()->getValue()['value'];
+             $nodeTitleOthers=$nodeOthers->get('title')->first()->getValue()['value']??"";
+             $nodeBodyOthers=$nodeOthers->get('body')->first()->getValue()['value']??"";
+            }
+          }
+        }
+        }
+
+         $variables['node_title']= $node->get('title')->first()->getValue()['value'] ;
+         $variables['node_body']= $node->get('body')->first()->getValue()['value'] ;
+         $variables['node_start_date']= $node->get('field_start_date')->getValue()[0]['value'];
+         $variables['node_end_date']= $node->get('field_end_date')->getValue()[0]['value'];
+         $variables['node_taxo_type'] =$currentTaxoName ;
+         $variables['noce_others_event_title']=$nodeTitleOthers;
+         $variables['noce_others_event_body']=$nodeBodyOthers;
+       
+      }
+  
+ 
+         
+    /**
+     * Implements hook_theme_suggestions_HOOK().
+     * render the template 
+     */
+    //to render template with some style
+    function custom_agenda_theme_suggestions_page_alter(array &$suggestions , array $variables , $hook) {
+       
+      
+        if ($node = \Drupal::routeMatch()->getParameter('node')) {
+          $type = $node->getType();
+          
+      $test=    \Drupal::request()->attributes->get('node');
+
+      
+        if ($type == 'evenement_') {
+
+
+          $suggestions[] = 'custom_agenda_type';  
+    
+        } 
+       
+        }
+   
+      }
+
+  //cron to unpublish event when end date is over  
+function unpublish_event_calendar(){
+  $nids = \Drupal::entityQuery('node')->condition('type','evenement_')->execute();
+  $nodes =  \Drupal\node\Entity\Node::loadMultiple($nids);
+  $currentDate= date('Y-m-d');
+
+  foreach ($nodes as $nodeOthers) {
+    // dump($nodeOthers->get('title')->first()->getValue()['value']);
+
+    $nodeEndDate=$nodeOthers->get('field_end_date')->getValue()[0]['value'];
+    $nodeStatus=$nodeOthers->get('status')->first()->getValue()['value'];
+    $nodeID=$nodeOthers->get('nid')->first()->getValue()['value'];
+
+   
+  if($nodeEndDate!=null){        
+    if( $nodeEndDate < $currentDate){
+    $nodeOthers->setPublished(false);
+    $nodeOthers->save();
+    }
+  }
+
+}
+}

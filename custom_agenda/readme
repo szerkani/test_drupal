@@ -68,4 +68,4 @@ créer quelques  content type « Agenda event »    pour tester  ex : avec  un t
 qu’on revient sur le /evenement-agenda  on retrouve notre event afficher avec la couleur de la taxonomie définie 
 
 
-un cron est disponible pour dépublier le events  avec une date de fin dépassée 
+un cron est disponible pour dépublier les events  avec une date de fin dépassée 

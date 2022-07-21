@@ -20,7 +20,8 @@ Je reste disponible si besoin .
 2-enable the module 
    drush en fullcalendar_view
 3- Ajouter le module custom : custom_agenda 
-
+   drush en custom_agenda
+   drush cr
 Assurer que les modules ci-dessous  sont disponibles et activés :
   module:
     - datetime
